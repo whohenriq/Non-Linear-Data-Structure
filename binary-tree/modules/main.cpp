@@ -8,145 +8,141 @@ struct Node
     Node *right;
 };
 
-Node *getNewNode(int data)
+Node *createNewNode(int data)
 {
     Node *newNode = new Node();
     newNode->data = data;
-    newNode->left, NULL;
-    newNode->right = NULL;
-
+    newNode->left, nullptr;
+    newNode->right = nullptr;
     return newNode;
 };
 
-Node *insert(Node *root, int data)
+Node *insertNode(Node *currentRoot, int valueToInsert)
 {
-    if (root == NULL)
+    if (currentRoot == nullptr)
     {
-        root = getNewNode(data);
-        return root;
+        Node *newNode = createNewNode(valueToInsert);
+        return newNode;
     }
-    else if (data <= root->data)
+
+    if (valueToInsert <= currentRoot->data)
     {
-        root->left = insert(root->left, data);
+        currentRoot->left = insertNode(currentRoot->left, valueToInsert);
     }
     else
     {
-        root->right = insert(root->right, data);
+        currentRoot->right = insertNode(currentRoot->right, valueToInsert);
     }
 
-    return root;
+    return currentRoot;
 };
 
-bool searchNode(Node *root, int data)
+bool searchNode(Node *currentRoot, int valueToFind)
 {
-    if (root == NULL)
+    if (currentRoot == nullptr)
     {
         return false;
     }
 
-    else if (root->data == data)
+    if (currentRoot->data == valueToFind)
     {
         return true;
     }
-    else if (data <= root->data)
+
+    if (valueToFind <= currentRoot->data)
     {
-        return searchNode(root->left, data);
+        return searchNode(currentRoot->left, valueToFind);
     }
+
     else
     {
-        return searchNode(root->right, data);
+        return searchNode(currentRoot->right, valueToFind);
     }
 };
 
-int getHight(Node *root)
+int countTotalNodes(Node *currentRoot)
 {
-    if (root == NULL)
+    if (currentRoot == nullptr)
     {
         return 0;
     }
-    return 1 + max(getHight(root->left), getHight(root->right));
+
+    int leftNodeCount = countTotalNodes(currentRoot->left);
+    int rightNodeCount = countTotalNodes(currentRoot->right);
+
+    return 1 + leftNodeCount + rightNodeCount;
 }
 
-int countNodes(Node *root)
+int countLeafNodes(Node *currentRoot)
 {
-    if (root == NULL)
+    if (currentRoot == nullptr)
     {
+        // Não possui nenhuma folha na subárvore
         return 0;
     }
-    return 1 + countNodes(root->left) + countNodes(root->right);
-}
 
-int countLeaves(Node *root)
-{
-    if (root == NULL)
+    if (currentRoot->left == nullptr && currentRoot->right == nullptr)
     {
-        return 0;
-    }
-    if (root->left == NULL && root->right == NULL)
-    {
+        // É um nó folha
         return 1;
     }
-    return countLeaves(root->left) + countLeaves(root->right);
+
+    int leftLeafCount = countLeafNodes(currentRoot->left);
+    int rightLeafCount = countLeafNodes(currentRoot->right);
+
+    return leftLeafCount + rightLeafCount;
 }
 
-void display_tree(Node *root, int spaces = 0)
+void displayTree(Node *currentRoot, int indent = 0)
 {
-    if (root == NULL)
+    if (currentRoot == nullptr)
     {
+        // Árvore vazia. 0
         return;
     }
 
-    spaces += 10;
+    indent += 10;
 
-    display_tree(root->right, spaces);
-    cout << "\n";
-
-    for (int i = 0; i < spaces; i++)
-    {
-        cout << " ";
-    }
-
-    cout << root->data << endl;
-
-    display_tree(root->left, spaces);
+    displayTree(currentRoot->right, indent);
+    cout << string(indent, ' ') << currentRoot->data << endl;
+    displayTree(currentRoot->left, indent);
 }
 
 int main()
 {
     Node *root = NULL;
 
-    root = insert(root, 100);
-    root = insert(root, 50);
-    root = insert(root, 200);
-    root = insert(root, 70);
-    root = insert(root, 140);
-    root = insert(root, 30);
-    root = insert(root, 350);
-    root = insert(root, 117);
-    root = insert(root, 400);
-    root = insert(root, 42);
-    root = insert(root, 80);
-    root = insert(root, 65);
+    root = insertNode(root, 100);
+    root = insertNode(root, 50);
+    root = insertNode(root, 200);
+    root = insertNode(root, 70);
+    root = insertNode(root, 140);
+    root = insertNode(root, 30);
+    root = insertNode(root, 350);
+    root = insertNode(root, 117);
+    root = insertNode(root, 400);
+    root = insertNode(root, 42);
+    root = insertNode(root, 80);
+    root = insertNode(root, 65);
 
-    cout << "Height binary: " << getHight(root) << endl;
+    cout << "Árvore Binária:\n";
+    displayTree(root);
 
-    cout << "Total number of nodes: " << countNodes(root) << endl;
-    cout << "Total number of leaves: " << countLeaves(root) << endl;
+    int valueToSearch;
+    cout << "\nDigite um valor para buscar: ";
+    cin >> valueToSearch;
 
-    int number;
-    cout << "Enter number be searched\n";
-    cin >> number;
-
-    if (searchNode(root, number) == true)
+    if (searchNode(root, valueToSearch))
     {
-        cout << "Found!!!" << endl;
+        cout << "Valor encontrado na árvore.\n";
     }
     else
     {
-        cout << "Not found." << endl;
+        cout << "Valor não encontrado na árvore.\n";
     }
 
-    display_tree(root);
+    cout << "Número total de nós: " << countTotalNodes(root) << endl;
+    cout << "Número total de folhas: " << countLeafNodes(root) << endl;
 
     return 0;
 }
