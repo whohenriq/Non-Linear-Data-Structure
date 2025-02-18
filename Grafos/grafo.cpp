@@ -37,23 +37,6 @@ public:
         adjList = new AdjacencyList[Vertices];
     }
 
-    ~Graph()
-    {
-        for (int i = 0; i <
-                        Vertices;
-             i++)
-        {
-            Node *current = adjList[i].head;
-            while (current)
-            {
-                Node *temp = current;
-                current = current->next;
-                delete temp;
-            }
-        }
-        delete[] adjList;
-    }
-
     bool isValidVertex(int vertice)
     {
         return vertice >= 0 && vertice < Vertices;
