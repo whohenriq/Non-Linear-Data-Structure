@@ -212,6 +212,7 @@ int main()
 {
     Node *root = nullptr;
     int choice, value;
+    Node *valueMin, *valueMax;
 
     root = insertNode(root, 100);
     root = insertNode(root, 50);
@@ -225,6 +226,12 @@ int main()
     root = insertNode(root, 42);
     root = insertNode(root, 80);
     root = insertNode(root, 65);
+
+    valueMin = min(root);
+    cout << valueMin->data << endl;
+
+    valueMax = max(root);
+    cout << valueMax->data << endl;
 
     do
     {
