@@ -1,4 +1,5 @@
 from graph import Graph
+from functions import bfs, dfs
 
 def main():
     graph = Graph()
@@ -8,8 +9,9 @@ def main():
     
     start = 'A'
     end = 'I'
-    graph.bfs(start, end)
-    graph.dfs_max_cost(start, end)
+    
+    print(bfs(graph, start, end))
+    print(dfs(graph, start, end))
     
     graph.visualize_graph()
 
