@@ -13,6 +13,22 @@ class Graph:
     def __init__(self):
         self.vertices = {}
         self.edges = []
+        
+    def get_neighbors(self, vertex):
+        neighbors = []
+        node = self.vertices[vertex]
+        while node:
+            neighbors.append((node.value, node.weight))
+            node = node.next
+        return neighbors
+
+    def get_weight(self, v1, v2):
+        node = self.vertices[v1]
+        while node:
+            if node.value == v2:
+                return node.weight
+            node = node.next
+        return float('inf')
 
     def add_vertex(self, vertex):
         if vertex not in self.vertices:

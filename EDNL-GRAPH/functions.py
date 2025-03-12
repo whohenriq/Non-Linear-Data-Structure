@@ -48,58 +48,38 @@ def bfs(graph: Graph, start, end):
 
     return f"[BFS] Nenhum caminho encontrado de {start} para {end}"
 
-def dfs(graph: Graph, start, end):
-    """
-    Busca em Profundidade (DFS) para Maior Custo Acumulado:
-    ---------------------------------------------------------
-    Explora todos os caminhos simples (sem ciclos) entre 'start' e 'end' e retorna aquele
-    com o maior custo acumulado (soma dos pesos das arestas).
-    
-    Parâmetros:
-    - start: Vértice de início.
-    - end: Vértice de destino.
-    
-    Funcionamento:
-    - Utiliza uma função auxiliar recursiva 'dfs_util' para explorar todos os caminhos.
-    - Controla os vértices visitados para evitar ciclos.
-    - Aplica a técnica de backtracking: após explorar um caminho, remove o último vértice
-        para testar outros caminhos possíveis.
-        
-    Retorno:
-    - Se existir um caminho, retorna uma tupla (caminho, custo_total).
-    - Caso contrário, informa que não há caminho entre os vértices.
-    """
-    if start not in graph.vertices or end not in graph.vertices:
-        return "Vértices inválidos"
+def tsp_dfs(graph: Graph, origin, current, visited_cities, current_cost, current_path, best_cost, best_path):
 
-    best_path = None
-    max_cost = float() 
-    visited = set()
+    if len(visited_cities) == len(graph.vertices):
+        total_cost = current_cost + get_weight(graph, current, origin)
+        if total_cost < best_cost:
+            best_cost = total_cost
+            best_path = current_path + [origin]
+        return best_cost, best_path
 
-    def dfs_recursive(current, current_cost, path):
-        nonlocal best_path, max_cost
-        if current == end:
-            if current_cost > max_cost:
-                max_cost = current_cost
-                best_path = path[:]
-            return
+    for neighbor, cost in get_neighbors(graph, current):
+        if neighbor not in visited_cities:
+            visited_cities.add(neighbor)
+            current_path.append(neighbor)
+            best_cost, best_path = tsp_dfs(graph, origin, neighbor, visited_cities, current_cost + cost, current_path, best_cost, best_path)
+            visited_cities.remove(neighbor)
+            current_path.pop()
 
-        visited.add(current)
-        
-        temp = graph.vertices[current]
-        while temp:
-            neighbor, weight = temp.value, temp.weight
-            if neighbor not in visited:
-                # Passando o peso da aresta para o cálculo do custo
-                dfs_recursive(neighbor, current_cost + weight, path + [neighbor])
-            temp = temp.next
-        
-        visited.remove(current)  # Backtracking
+    return best_cost, best_path
 
-    dfs_recursive(start, 0, [start])
 
-    if best_path:
-        return f"[DFS] Caminho de maior custo acumulado de {start} para {end}: {best_path} | Custo total: {max_cost}"
-    else:
-        return f"[DFS] Nenhum caminho encontrado de {start} para {end}"
+def get_weight(graph: Graph, v1, v2):
+    node = graph.vertices[v1]
+    while node:
+        if node.value == v2:
+            return node.weight
+        node = node.next
+    return float('inf')
 
+def get_neighbors(graph: Graph, vertice):
+    neighbors = []
+    node = graph.vertices[vertice]
+    while node:
+        neighbors.append((node.value, node.weight))
+        node = node.next
+    return neighbors
